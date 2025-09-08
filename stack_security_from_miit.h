@@ -1,14 +1,13 @@
 #ifndef STACK_SECURITY_FROM_MIIT_H
 #define STACK_SECURITY_FROM_MIIT_H
 
-#include "stack.h"
-
+#include "stack_ushel_stack.h"
 
 enum SO_GOOD
 { 
     GOOD = 1
 };
-
+    
 enum ERROS_FOR_STACK_OK
 { 
     CHO_ETO_ZA_ZIFRI = 544,
@@ -26,7 +25,7 @@ enum ERROS_FOR_STACK_OK
  * @brief функция тихой верификации
  * @param my_stack указатель на структуру
  */
-int Stack_Ok(STACK *my_stack);
+int stack_ok(STACK *my_stack);
 
 /**
  * @brief функция проверяющая указатель на структуру
@@ -39,5 +38,11 @@ void check_pointer(STACK *my_stack);
  * @param *my_stack указатель на стек
  */
 void stack_dump(STACK *my_stack);
+
+/**
+ * @brief функция-вывода стека
+ * @param *my_stack указатель на стек
+ */
+int print_stack_eshkere(STACK *my_stack);
 
 #endif //STACK_SECURITY_FROM_MIIT_H
