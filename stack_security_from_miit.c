@@ -7,8 +7,8 @@ int Stack_Ok(STACK *my_stack)
 
     if(my_stack->size < 0)
     { 
-        my_stack->stack_error = CHO_ETO_ZA_ZIFRI;
-        return CHO_ETO_ZA_ZIFRI;
+        my_stack->stack_error = SIZE_IS_NEGATIV;
+        return SIZE_IS_NEGATIV;
     }
 
     if (my_stack->capacity < 0)
@@ -62,7 +62,7 @@ void stack_dump(STACK *my_stack)
     int errors_code = Stack_Ok(my_stack);
     switch(errors_code)
     {
-        case CHO_ETO_ZA_ZIFRI:
+        case SIZE_IS_NEGATIV:
             fprintf(log, "As we can see, the size is negative\n");
             break;
         case CAPACITY_IS_NEGATIVE:
@@ -70,9 +70,6 @@ void stack_dump(STACK *my_stack)
             break;
         case STACK_OVERFLOW:
             fprintf(log, "size > capacity ---> STACK OVERFLOOOOW\n");
-            break;
-        case MEMORY_ALLOCATED:
-            fprintf(log, "And the memory is not allocated\n");
             break;
         case NAME_INDEFINITE:
             fprintf(log, "And where is the stack name?\n");
@@ -94,7 +91,7 @@ void stack_dump(STACK *my_stack)
     
     for (size_t i = 0; i < my_stack->size; i++)
     {
-        fprintf(log, "[%d] --> %zu elements ", my_stack->array_for_elements[i], i);
+        fprintf(log, "\"%d\"--> [%zu] elements ", my_stack->array_for_elements[i], i);
     }
     fprintf(log, "\n================================================\n");
     fprintf(log, "\n================================================\n");

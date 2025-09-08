@@ -43,7 +43,7 @@ void Instruction();
  *                          а)ввести имя стека руками
  *                          б)поставить имя по дефолту
  */
-void StackCtor(STACK *my_stack, size_t doublecap, const char symbol_for_macros);
+int StackCtor(STACK *my_stack, size_t doublecap, const char symbol_for_macros);
 
 /**
  * @brief деструктор для стека

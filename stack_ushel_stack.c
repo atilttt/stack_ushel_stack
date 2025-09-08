@@ -1,15 +1,25 @@
 #include "stack_ushel_stack.h"
 #include "stack_security_from_miit.h"
 
-void StackCtor(STACK *my_stack, size_t doublecap, const char symbol_for_macros)
+int StackCtor(STACK *my_stack, size_t doublecap, const char symbol_for_macros)
 {
     check_pointer(my_stack);
 
     my_stack->capacity = doublecap;
+    if (my_stack->capacity == 0)
+    {
+        return ZERO_CAPACITY;
+    }
     my_stack->size = 0;
-    my_stack->name_stack = "PISYA";
-    my_stack->array_for_elements = (int *)calloc(my_stack->capacity, sizeof(size_t));
+    my_stack->name_stack = "STACK";
     
+    my_stack->array_for_elements = (int *)calloc(my_stack->capacity, sizeof(size_t));
+    if (my_stack->array_for_elements == NULL)
+    {
+        free(my_stack->array_for_elements);
+        return MEMORY_ALLOCATED;
+    }
+
 }
 
 void StackDtor(STACK *my_stack)
