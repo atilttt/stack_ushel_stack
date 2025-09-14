@@ -6,29 +6,26 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define CHOOSE(symbol)  (symbol) == 'y' ? printf("Okay, stack name: PISYA\n") : printf("Okay, enter the name you like.\n")  
-
 //=====================================//
 
 typedef struct my_stack
 {
 
     int stack_error;
-
+    
     const char *name_stack; // имя в стеке не должно меняться
     int capacity;
     int size;
-    int *array_for_elements;
-    
+    int *array_for_elements;   
 } STACK;
 
 //======================================//
 
 /**
  * @brief функция позволяющая пользователю ввести собственное имя стека
- * @param *my_stack указатель на структуру
+ * @param *name указатель на временный буфер
  */
-char* UserInputNameStack(STACK *my_stack);
+char* UserInputNameStack(char *name);
 
 /**
  * @brief функция, описывающая программу
@@ -38,12 +35,12 @@ void Instruction();
 /**
  * @brief конструктор для стека
  * @param my_stack указатель на структуру
- * @param doublecap некая емкость стека(максимальное кол-во элементов)
+ * @param doublecap некая емкость стека(максимальное кол-во элементов) (кидаем как константу, обещая, что здесь они не изменится)
  * @param symbol_for_macros символ для макроса, который позволяет пользователю
  *                          а)ввести имя стека руками
  *                          б)поставить имя по дефолту
  */
-int StackCtor(STACK *my_stack, size_t doublecap, const char symbol_for_macros);
+void StackCtor(STACK *my_stack, const int doublecap, const char *symbol_for_macros);
 
 /**
  * @brief деструктор для стека

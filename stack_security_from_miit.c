@@ -1,9 +1,9 @@
 #include "stack_ushel_stack.h"
 #include "stack_security_from_miit.h"
 
-int Stack_Ok(STACK *my_stack)
+int StackOk(STACK *my_stack)
 { 
-    check_pointer(my_stack);
+    CheckPointer(my_stack);
 
     if(my_stack->size < 0)
     { 
@@ -11,12 +11,12 @@ int Stack_Ok(STACK *my_stack)
         return SIZE_IS_NEGATIV;
     }
 
-    if (my_stack->capacity < 0)
+    if (my_stack->capacity <= 0)
     {
-        my_stack->stack_error = CAPACITY_IS_NEGATIVE; 
+        my_stack->stack_error = CAPACITY_IS_NEGATIVE; //ну возможно и ноль, что тоже странно 
         return CAPACITY_IS_NEGATIVE; 
     }
-
+    
     if (my_stack->size > my_stack->capacity)
     { 
         my_stack->stack_error = STACK_OVERFLOW;
@@ -39,7 +39,7 @@ int Stack_Ok(STACK *my_stack)
     return GOOD;
 }
 
-void check_pointer(STACK *my_stack)
+void CheckPointer(STACK *my_stack)
 { 
     if (my_stack == NULL)
     { 
@@ -48,50 +48,80 @@ void check_pointer(STACK *my_stack)
     }
 }
 
-void stack_dump(STACK *my_stack)
+void CheckStackDtor(STACK *my_stack)
+{
+    CheckPointer(my_stack);
+
+    if (my_stack->capacity > 0)
+    {
+        fprintf(stderr, "StackDtor did not reset capacity\n");
+        exit(STACK_DTOR_ERROR);
+    }
+    if (my_stack->size > 0)
+    { 
+        fprtinf(stderr, "StackDtor did not reset size\n");
+        exit(STACK_DTOR_ERROR);
+    }
+    if(my_stack->name_stack != NULL)
+    {
+        fprintf(stderr, "StackDtor didn't set the pointer to zero\n");
+        exit(STACK_DTOR_ERROR);
+    }
+    if (my_stack->array_for_elements != NULL)
+    {
+        fprintf(stderr, "StackDtor didn't set the pointer to zero\n");
+        exit(STACK_DTOR_ERROR);
+    }
+}
+
+void StackDump(STACK *my_stack, const int line_call)
 { 
-    check_pointer(my_stack);
+    CheckPointer(my_stack);
 
     FILE *log = fopen("log.txt", "w");
     assert(log);
     fprintf(log, "========== WELCOME TO THE STACK ==========\n\n\n");
     
-    fprintf(log, "Let's see what the silent verification has brought out. (maybee everything is fine)\n");
+    fprintf(log, "Let's see what the silent verification has brought out. (called from line %d))\n", line_call);
     fprintf(log, "\n--------------------------------------------------------\n");
 
-    int errors_code = Stack_Ok(my_stack);
-    switch(errors_code)
+    switch(my_stack->stack_error)
     {
         case SIZE_IS_NEGATIV:
-            fprintf(log, "As we can see, the size is negative\n");
+            fprintf(log, "As we can see, the size is negative, does this even happen?\n");
             break;
         case CAPACITY_IS_NEGATIVE:
             fprintf(log, "Brother, why is our capacity negative?\n");
             break;
         case STACK_OVERFLOW:
-            fprintf(log, "size > capacity ---> STACK OVERFLOOOOW\n");
+            fprintf(log, "size > capacity ---> STACK OVERFLOW\n");
             break;
         case NAME_INDEFINITE:
             fprintf(log, "And where is the stack name?\n");
             break;
+        case MEMORY_ALLOCATED:
+            fprintf(log, "The trouble is, the array is lost\n");
+            exit(CRITICAL_ERROR); //ну это сто проц крит, просто надо поймать это, иначе сигфолт ебаный
         default:
             fprintf(log, "And where is the stack name?\n");
+            exit(CRITICAL_ERROR); //тоже самое
             break; 
-    }
-
-    fprintf(log, "Wow, there are no errors, then let's see what's in our stack.\n");
-    fprintf(log, "\n================================================\n");
-    fprintf(log, "\n================================================\n");
-    fprintf(log, "Name STACK:%s\
-                  Adress STACK: %p\
-                  Size STACK: %zu\
-                  Capacity STACK: %zu\
-                  The adress of the first element: %p\
-                  The adress of the last element: %p", my_stack->name_stack , my_stack, my_stack->size, my_stack->capacity, my_stack->array_for_elements, my_stack->array_for_elements[my_stack->size]);                      
+    } 
     
-    for (size_t i = 0; i < my_stack->size; i++)
+    fprintf(log, "Brief description of the stack\n\n");
+
+    fprintf(log, "\n================================================\n");
+    fprintf(log, "\n================================================\n");
+    fprintf(log, "The address of the first element --> %p \
+                  The address of the last element --> %p \
+                  Stack address --> %p \
+                  Number of stack elements --> %d \
+                  Capacity stack --> %d \
+                  Name stack --> %s\n", my_stack->array_for_elements, &my_stack->array_for_elements[my_stack->size], my_stack, my_stack->size, my_stack->capacity, my_stack->name_stack);
+
+    for (size_t i = 0; i < my_stack->size; i++) // вот сообственно тот самый сигфолт, который я тогда поймал, обратился к нулевому указателю
     {
-        fprintf(log, "\"%d\"--> [%zu] elements ", my_stack->array_for_elements[i], i);
+        fprintf(log, "[%d] ===> %d elements", my_stack->array_for_elements[i], i);
     }
     fprintf(log, "\n================================================\n");
     fprintf(log, "\n================================================\n");
@@ -99,4 +129,6 @@ void stack_dump(STACK *my_stack)
 
     fprintf(log, "\n\n========== GOODBAY ==========\n\n");
     fclose(log);
+
+    exit(CRITICAL_ERROR);
 }
