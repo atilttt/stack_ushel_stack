@@ -1,29 +1,32 @@
 #include "stack_ushel_stack.h"
 #include "stack_security_from_miit.h"
 
-void StackCtor(STACK *my_stack, const int doublecup, const char *name_stack_user)
+void StackCtor(STACK *my_stack, const int doublecup)
 {
     CheckPointer(my_stack);
-    StackOk(my_stack);
 
     my_stack->capacity = doublecup;
+    if (my_stack->capacity <= 0)
+    {
+        my_stack->stack_error = CAPACITY_IS_NEGATIVE;
+        StackDump(my_stack, __LINE__, "StackCtor");
+    }
     my_stack->size = 0;
-    my_stack->name_stack = name_stack_user;
+    my_stack->name_stack = "stack";
     my_stack->array_for_elements = (int *)calloc(my_stack->capacity, sizeof(int));
 
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
+    if (my_stack->array_for_elements == NULL)
     {
-        StackDump(my_stack, 17);
+        my_stack->stack_error = MEMORY_ALLOCATED;
+        StackDump(my_stack, __LINE__, "StackCtor");
     }
-    else
-        my_stack->stack_error = GOOD;
+
+    StackOk(my_stack);
 }
 
 void StackDtor(STACK *my_stack)
 { 
     CheckPointer(my_stack);
-    StackOk(my_stack);
 
     free(my_stack->array_for_elements);
 
@@ -36,16 +39,15 @@ void StackDtor(STACK *my_stack)
 }
 
 
-void pushB(STACK *my_stack, int value)
+void PushB(STACK *my_stack, int value)
 { 
     CheckPointer(my_stack);
     StackOk(my_stack);
 
-
     if (my_stack->size >= my_stack->capacity)
     { 
         my_stack->stack_error = STACK_OVERFLOW;
-        StackDump(my_stack, 48);
+        StackDump(my_stack, __LINE__, "PushB");
     }
 
     my_stack->array_for_elements[my_stack->size] = value;
@@ -53,47 +55,64 @@ void pushB(STACK *my_stack, int value)
     
     StackOk(my_stack);
     if (my_stack->stack_error != GOOD)
-    { 
-        StackDump(my_stack, 46);
-    }
+        StackDump(my_stack, __LINE__, "PushB");
     else
-        my_stack->stack_error == GOOD;
-
+        my_stack->stack_error = GOOD;
 }
 
 
-void PopA(STACK *my_stack)
+int PopA(STACK *my_stack)
 { 
     CheckPointer(my_stack);
     StackOk(my_stack);
 
+    if (my_stack->stack_error != GOOD)
+        StackDump(my_stack, __LINE__, "PopA");
 
-    if (my_stack->size >= 0 && (my_stack->size <= my_stack->capacity))
-    { 
-        my_stack->size--;
-        int deleted_element = my_stack->array_for_elements[my_stack->size];
-    }
-    else
+    if (my_stack->size <= 0)
     { 
         my_stack->stack_error = SIZE_IS_NEGATIV;
-        StackDump(my_stack, 79);
+        StackDump(my_stack, __LINE__, "PopA");
     }
 
-    if ((my_stack->size > my_stack->capacity) && (my_stack->size < my_stack->capacity/4))
+    my_stack->size--;
+    int deleted_element = my_stack->array_for_elements[my_stack->size];
+
+    if (my_stack->size < my_stack->capacity / 4 && my_stack->capacity > 4)
     {
-        int capacity = my_stack->capacity / 4;
-        int array_after_realloc = (int *)realloc(my_stack->array_for_elements, sizeof(int) * capacity);
+        int new_capacity = my_stack->capacity / 2;
+        int *array_after_realloc = (int *)realloc(my_stack->array_for_elements,
+                                                  sizeof(int) * new_capacity);
 
         if (array_after_realloc != NULL)
         {
-            my_stack->capacity = capacity;
+            my_stack->capacity = new_capacity;
             my_stack->array_for_elements = array_after_realloc;  
         }
         else
         {
-            my_stack->stack_error = MEMORY_ALLOCATED; //ну вот это уже не крит, по-факту, хотя это надо как то обыграть
-                                                      // мб стоит и в дамп закинуть, но потом
+            my_stack->stack_error = MEMORY_ALLOCATED;
+            StackDump(my_stack, __LINE__, "PopA");
         }
     }
+
+    StackOk(my_stack);
+    if (my_stack->stack_error != GOOD)
+        StackDump(my_stack, __LINE__, "PopA");
+
+    return deleted_element;
 }
 
+void PrintStack(STACK *my_stack)
+{
+    CheckPointer(my_stack);
+    
+    printf("\nstack output\n");
+    printf("----------------------------------\n");
+    
+    for (size_t i = 0; i < my_stack->size; i++)
+    {
+        printf("[%zu] element ---> %d\n", i, my_stack->array_for_elements[i]);
+    }
+    
+}

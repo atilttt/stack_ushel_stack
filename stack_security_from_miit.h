@@ -17,7 +17,7 @@ enum ERROS_FOR_STACK_OK
     NAME_INDEFINITE = 934,
     MEMORY_ALLOCATED = 505,
     CHIVO = 403,
-    STACK_DTOR_ERROR = 401
+    STACK_DTOR_ERROR = 401 //ну смысла расписывать че там не так, просто пусть будет деструктор error
 };
 
 
@@ -37,13 +37,14 @@ void CheckPointer(STACK *my_stack);
  * @brief функция для проверки деструктора
  * @param STACK *my_stack указатель на структуру
  */
-void CheckStackDtor(STACK *my_stack);
+int CheckStackDtor(STACK *my_stack);
 
 /**
  * @brief функция дампа(ЭТО ВОТ ТАКОЕ ВОТ БОЛЬШОЕ ОПИСАНИПЕ СТЕКА)
  * @param *my_stack указатель на стек
  * @param const int line_call строка, которая вызвала дамп
+ * @param const char *name_function_call функция, которая заколила зайти в дамп
  */
-void StackDump(STACK *my_stack, const int line_call);
+void StackDump(STACK *my_stack, const int line_call, const char *name_function_call);
 
 #endif //STACK_SECURITY_FROM_MIIT_H

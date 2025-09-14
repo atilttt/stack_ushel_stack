@@ -1,0 +1,24 @@
+========== WELCOME TO THE STACK ==========
+
+
+Let's see what the silent verification has brought out. (called from line 12)
+
+--------------------------------------------------------
+Brother, why is our capacity negative?
+Brief description of the stack
+
+
+================================================
+================================================
+The address of the first element --> (nil) 
+The address of the last element --> (nil) 
+Stack address --> 0x7ffe45540b10
+Number of stack elements --> 0
+Capacity stack --> -10
+Name stack --> (null)
+================================================
+================================================
+
+
+========== GOODBAY ==========
+

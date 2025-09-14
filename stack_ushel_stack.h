@@ -22,12 +22,6 @@ typedef struct my_stack
 //======================================//
 
 /**
- * @brief функция позволяющая пользователю ввести собственное имя стека
- * @param *name указатель на временный буфер
- */
-char* UserInputNameStack(char *name);
-
-/**
  * @brief функция, описывающая программу
  */
 void Instruction();
@@ -40,7 +34,7 @@ void Instruction();
  *                          а)ввести имя стека руками
  *                          б)поставить имя по дефолту
  */
-void StackCtor(STACK *my_stack, const int doublecap, const char *symbol_for_macros);
+void StackCtor(STACK *my_stack, const int doublecap);
 
 /**
  * @brief деструктор для стека
@@ -59,7 +53,13 @@ void PushB(STACK *my_stack, int value);
   * @brief функция, удаляющая элемент из стека
   * @param *my_stack указатель на структуру
 */
-void PopA(STACK *my_stack);
+int PopA(STACK *my_stack);
+
+/**
+ * @brief функция вывода стека
+ * @param STACK *my_stack - указатель на структуру
+ */
+void PrintStack(STACK *my_stack);
 
 
 #endif //STACK_USHEL_STACK_H 
