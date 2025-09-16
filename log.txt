@@ -1,20 +1,22 @@
 ========== WELCOME TO THE STACK ==========
 
 
-Let's see what the silent verification has brought out. (called from line 12)
-
 --------------------------------------------------------
-Brother, why is our capacity negative?
-Brief description of the stack
-
+Let's see what the silent verification has brought out.
+THE DUMP WAS CAUSED BY 12 line
+"StackCtor" caused the dump
+ERROR CODE: 200
+--------------------------------------------------------
+Brother, why is our capacity negative?(maybee zero)
 
 ================================================
+Brief description of the stack
 ================================================
 The address of the first element --> (nil) 
 The address of the last element --> (nil) 
-Stack address --> 0x7ffe45540b10
+Stack address --> 0x7fff3c51e900
 Number of stack elements --> 0
-Capacity stack --> -10
+Capacity stack --> 0
 Name stack --> (null)
 ================================================
 ================================================

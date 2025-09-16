@@ -10,7 +10,7 @@ int main(void)
 
     StackCtor(&my_stack, capacity);
     
-    PushB(&my_stack, 2);
+    PushB(&my_stack, 10.2);
     //PrintStack(&my_stack);
     PushB(&my_stack, 3);
     //PrintStack(&my_stack);

@@ -82,8 +82,12 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
     assert(log);
     fprintf(log, "========== WELCOME TO THE STACK ==========\n\n\n");
     
-    fprintf(log, "Let's see what the silent verification has brought out. (called from line %d)\n", line_call);
-    fprintf(log, "\n--------------------------------------------------------\n");
+    fprintf(log, "--------------------------------------------------------\n");
+    fprintf(log, "Let's see what the silent verification has brought out.\n");
+    fprintf(log, "THE DUMP WAS CAUSED BY %d line\n", line_call);
+    fprintf(log, "\"%s\" caused the dump\n", name_function_call);
+    fprintf(log, "ERROR CODE: %d\n", my_stack->stack_error);
+    fprintf(log, "--------------------------------------------------------\n");
 
     switch(my_stack->stack_error)
     {
@@ -91,7 +95,7 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
             fprintf(log, "As we can see, the size is negative, does this even happen?\n");
             break;
         case CAPACITY_IS_NEGATIVE:
-            fprintf(log, "Brother, why is our capacity negative?\n");
+            fprintf(log, "Brother, why is our capacity negative?(maybee zero)\n");
             break;
         case STACK_OVERFLOW:
             fprintf(log, "size > capacity ---> STACK OVERFLOW\n");
@@ -111,10 +115,9 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
             break; 
     } 
     
-    fprintf(log, "Brief description of the stack\n\n");
-
     fprintf(log, "\n================================================\n");
-    fprintf(log, "================================================\n");
+    fprintf(log, "Brief description of the stack");
+    fprintf(log, "\n================================================\n");
     fprintf(log, "The address of the first element --> %p \n\
 The address of the last element --> %p \n\
 Stack address --> %p\n\
