@@ -5,15 +5,26 @@ void StackCtor(STACK *my_stack, const int doublecup)
 {
     CheckPointer(my_stack);
 
+    my_stack->canary_r = CANARY_VALUE;
+    my_stack->canary_l = CANARY_VALUE;
+
     my_stack->capacity = doublecup;
     if (my_stack->capacity <= 0)
     {
         my_stack->stack_error = CAPACITY_IS_NEGATIVE;
         StackDump(my_stack, __LINE__, "StackCtor");
     }
+
+    my_stack->array_for_elements = (int *)calloc(my_stack->capacity + 2 * sizeof(long long), sizeof(int));
+    if (my_stack->array_for_elements == NULL){
+        StackDump(my_stack, __LINE__, "StackCtor");
+    }
+
+    *((long long*)my_stack->array_for_elements) = my_stack->canary_r;
+    *((long long*)(my_stack->array_for_elements + my_stack->capacity)) = my_stack->canary_l;
+
     my_stack->size = 0;
     my_stack->name_stack = "stack";
-    my_stack->array_for_elements = (int *)calloc(my_stack->capacity, sizeof(int));
 
     if (my_stack->array_for_elements == NULL)
     {
@@ -35,6 +46,9 @@ void StackDtor(STACK *my_stack)
     my_stack->name_stack = NULL;
     my_stack->array_for_elements = NULL;
 
+    my_stack->canary_l = 0;
+    my_stack->canary_r = 0;
+
     CheckStackDtor(my_stack);
 }
 
@@ -49,7 +63,7 @@ void PushB(STACK *my_stack, int value)
         my_stack->stack_error = STACK_OVERFLOW;
         StackDump(my_stack, __LINE__, "PushB");
     }
-
+    
     my_stack->array_for_elements[my_stack->size] = value;
     my_stack->size++;
     

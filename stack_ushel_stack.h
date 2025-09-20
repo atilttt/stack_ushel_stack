@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+
 //=====================================//
 
 typedef struct my_stack
@@ -16,7 +17,10 @@ typedef struct my_stack
     const char *name_stack; // имя в стеке не должно меняться
     int capacity;
     int size;
-    int *array_for_elements;   
+    int *array_for_elements;
+
+    long long canary_r;
+    long long canary_l; 
 } STACK;
 
 //======================================//

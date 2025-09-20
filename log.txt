@@ -3,21 +3,21 @@
 
 --------------------------------------------------------
 Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 12 line
-"StackCtor" caused the dump
-ERROR CODE: 200
+THE DUMP WAS CAUSED BY 75 line
+"PopA" caused the dump
+ERROR CODE: 544
 --------------------------------------------------------
-Brother, why is our capacity negative?(maybee zero)
+As we can see, the size is negative, does this even happen?
 
 ================================================
 Brief description of the stack
 ================================================
-The address of the first element --> (nil) 
-The address of the last element --> (nil) 
-Stack address --> 0x7fff3c51e900
+The address of the first element --> 0x6080ced756b0 
+The address of the last element --> 0x6080ced756b0 
+Stack address --> 0x7ffcb15d9040
 Number of stack elements --> 0
-Capacity stack --> 0
-Name stack --> (null)
+Capacity stack --> 2
+Name stack --> stack
 ================================================
 ================================================
 

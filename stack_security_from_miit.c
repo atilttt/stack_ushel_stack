@@ -1,7 +1,7 @@
 #include "stack_ushel_stack.h"
 #include "stack_security_from_miit.h"
 
-int StackOk(STACK *my_stack)
+ERORRS StackOk(STACK *my_stack)
 { 
     CheckPointer(my_stack);
 
@@ -48,7 +48,7 @@ void CheckPointer(STACK *my_stack)
     }
 }
 
-int CheckStackDtor(STACK *my_stack)
+ERORRS CheckStackDtor(STACK *my_stack)
 {
     CheckPointer(my_stack);
 
@@ -72,6 +72,8 @@ int CheckStackDtor(STACK *my_stack)
         my_stack->stack_error = STACK_DTOR_ERROR;
         return STACK_DTOR_ERROR;
     }
+
+    return GOOD;
 }
 
 void StackDump(STACK *my_stack, const int line_call, const char *name_function_call)
