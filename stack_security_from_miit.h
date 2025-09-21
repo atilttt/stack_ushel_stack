@@ -3,7 +3,7 @@
 
 #include "stack_ushel_stack.h"
 
-static long long CANARY_VALUE = 0xDEADFFDDDFFFDAAD;
+static long long CANARY_VALUE = 0xDEADCAFEDEADCAFEULL;
 
 typedef enum    
 { 
@@ -15,7 +15,11 @@ typedef enum
     MEMORY_ALLOCATED = 505,
     CHIVO = 403,
     STACK_DTOR_ERROR = 401,
-    GOOD = 0 //ну смысла расписывать че там не так, просто пусть будет деструктор error
+
+    CANARY_RIGHT_DEAD = 303,
+    CANARY_LEFT_DEAD = 301,
+
+    GOOD = 0 
 } ERORRS;
 
 
@@ -44,5 +48,8 @@ ERORRS CheckStackDtor(STACK *my_stack);
  * @param const char *name_function_call функция, которая заколила зайти в дамп
  */
 void StackDump(STACK *my_stack, const int line_call, const char *name_function_call);
+
+#else
+
 
 #endif //STACK_SECURITY_FROM_MIIT_H

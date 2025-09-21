@@ -1,6 +1,11 @@
 #ifndef STACK_USHEL_STACK_H 
 #define STACK_USHEL_STACK_H
 
+
+//#define DEBUG_MOD
+
+
+#include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -14,10 +19,11 @@ typedef struct my_stack
 
     int stack_error;
     
-    const char *name_stack; // имя в стеке не должно меняться
+    const char *name_stack;  
     int capacity;
     int size;
-    int *array_for_elements;
+    int *array_for_elements; //основной массив куда будем сохранять наши элементы
+    char *temporary_array; //временный массив, под который будет выделяться память и туда будут засунуты канарейки, его dtor и будет чистить
 
     long long canary_r;
     long long canary_l; 
@@ -29,6 +35,19 @@ typedef struct my_stack
  * @brief функция, описывающая программу
  */
 void Instruction();
+
+/**
+ * @brief функция для подсчета общего количества бит для выделения памяти
+ * @param int capacity наша так называемая мощность стека
+ */
+static size_t TotalBytes(int capacity);
+
+/**
+ * @brief функция для реалокации памяти
+ * @param STACK *my_stack указатель на структуру
+ * @param int new_capacity новый размер capacity
+ */
+static void ResizeArray(STACK *my_stack, int new_capacity);
 
 /**
  * @brief конструктор для стека
@@ -57,7 +76,7 @@ void PushB(STACK *my_stack, int value);
   * @brief функция, удаляющая элемент из стека
   * @param *my_stack указатель на структуру
 */
-int PopA(STACK *my_stack);
+void PopA(STACK *my_stack);
 
 /**
  * @brief функция вывода стека

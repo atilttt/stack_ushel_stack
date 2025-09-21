@@ -1,9 +1,22 @@
 #include "stack_ushel_stack.h"
+#include <stdio.h>
 #include "stack_security_from_miit.h"
 
 ERORRS StackOk(STACK *my_stack)
 { 
     CheckPointer(my_stack);
+
+    if (my_stack->canary_r != CANARY_VALUE)
+    { 
+        my_stack->stack_error = CANARY_RIGHT_DEAD;
+        return CANARY_RIGHT_DEAD;
+    }
+
+    if (my_stack->canary_l != CANARY_VALUE)
+    {
+        my_stack->stack_error = CANARY_LEFT_DEAD;
+        return CANARY_LEFT_DEAD;
+    }
 
     if(my_stack->size < 0)
     { 
@@ -23,7 +36,7 @@ ERORRS StackOk(STACK *my_stack)
         return STACK_OVERFLOW;
     }
 
-    if (my_stack->array_for_elements == NULL)
+    if (my_stack->temporary_array == NULL || my_stack->array_for_elements == NULL)
     { 
         my_stack->stack_error = MEMORY_ALLOCATED;
         return MEMORY_ALLOCATED;
@@ -80,7 +93,7 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
 { 
     CheckPointer(my_stack);
 
-    FILE *log = fopen("log.txt", "w");
+    FILE *log = fopen("log.txt", "a");
     assert(log);
     fprintf(log, "========== WELCOME TO THE STACK ==========\n\n\n");
     
@@ -111,6 +124,12 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
         case STACK_DTOR_ERROR:
             fprintf(log, "We're here because the destructor didn't work properly.(looking at the output)\n");
             break;
+        case CANARY_RIGHT_DEAD:
+            fprintf(log, "The right canary is dead\n");
+            break;
+        case CANARY_LEFT_DEAD:
+            fprintf(log, "The left canary is dead\n");
+            break;
         default:
             fprintf(log, "And where is the stack name?\n");
             exit(CRITICAL_ERROR); //тоже самое
@@ -120,12 +139,13 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
     fprintf(log, "\n================================================\n");
     fprintf(log, "Brief description of the stack");
     fprintf(log, "\n================================================\n");
-    fprintf(log, "The address of the first element --> %p \n\
-The address of the last element --> %p \n\
+    fprintf(log, "The name stack --> %s \n\
+Capacity stack --> %d \n\
+Size stack --> %d\n\
 Stack address --> %p\n\
-Number of stack elements --> %d\n\
-Capacity stack --> %d\n\
-Name stack --> %s\n", my_stack->array_for_elements, &my_stack->array_for_elements[my_stack->size], my_stack, my_stack->size, my_stack->capacity, my_stack->name_stack);
+The adress of the last element --> %p\n\
+The address of the penultimate element --> %p\n\
+The address of the first element --> %p\n", my_stack->name_stack, my_stack->capacity, my_stack->size, my_stack, my_stack->array_for_elements + my_stack->capacity - 1, my_stack->array_for_elements + my_stack->capacity - 2, my_stack->array_for_elements);
 
     for (size_t i = 0; i < my_stack->size; i++) // вот сообственно тот самый сигфолт, который я тогда поймал, обратился к нулевому указателю
     {
