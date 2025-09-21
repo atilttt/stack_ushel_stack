@@ -1,6 +1,11 @@
 #ifndef STACK_SECURITY_FROM_MIIT_H
 #define STACK_SECURITY_FROM_MIIT_H
 
+#define DEBUG_MOD
+
+//#define NORMAL_MOD
+
+
 #include "stack_ushel_stack.h"
 
 static long long CANARY_VALUE = 0xDEADCAFEDEADCAFEULL;
@@ -14,7 +19,7 @@ typedef enum
     NAME_INDEFINITE = 934,
     MEMORY_ALLOCATED = 505,
     CHIVO = 403,
-    STACK_DTOR_ERROR = 401,
+    STACK_DTOR_ERROR = 401, //я решил особо не распинаться почему неправильно отработал деструктор, сразу просто ошибка и понятно где она
 
     CANARY_RIGHT_DEAD = 303,
     CANARY_LEFT_DEAD = 301,

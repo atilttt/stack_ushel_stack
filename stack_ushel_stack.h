@@ -2,9 +2,6 @@
 #define STACK_USHEL_STACK_H
 
 
-//#define DEBUG_MOD
-
-
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>

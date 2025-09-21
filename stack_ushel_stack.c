@@ -1,6 +1,6 @@
 #include "stack_ushel_stack.h"
 #include "stack_security_from_miit.h"
-#include <stddef.h>
+
 
 
 static size_t TotalBytes(int capacity)
@@ -18,8 +18,15 @@ static void ResizeArray(STACK *my_stack, int new_capacity)
     char *new_temporary_array_for_realloc = (char *)realloc(my_stack->temporary_array, new_total);
     if (!new_temporary_array_for_realloc)
     { 
-        my_stack->stack_error = MEMORY_ALLOCATED;
-        StackDump(my_stack, __LINE__ , __func__);
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "NULL pointer");
+            exit(MEMORY_ALLOCATED);
+        #endif
+
+        #ifdef DEBUG_MOD
+            my_stack->stack_error = MEMORY_ALLOCATED;
+            StackDump(my_stack, __LINE__ , __func__);
+        #endif
     }
 
     my_stack->temporary_array = new_temporary_array_for_realloc;
@@ -30,12 +37,15 @@ static void ResizeArray(STACK *my_stack, int new_capacity)
     my_stack->array_for_elements = (int *)(my_stack->temporary_array + sizeof(long long));
     my_stack->capacity = new_capacity;
 
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
-    {
-        StackDump(my_stack, __LINE__, __func__);
-    }
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        {
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
     
+        
 
 }
 
@@ -51,15 +61,30 @@ void StackCtor(STACK *my_stack, const int doublecup)
     my_stack->capacity = doublecup;
     if (my_stack->capacity <= 0)
     {
-        my_stack->stack_error = CAPACITY_IS_NEGATIVE;
-        StackDump(my_stack, __LINE__, __func__);
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "Capacity is negative\n");
+            exit(CAPACITY_IS_NEGATIVE);
+        #endif
+
+        #ifdef DEBUG_MOD
+            my_stack->stack_error = CAPACITY_IS_NEGATIVE;
+            StackDump(my_stack, __LINE__, __func__);
+        #endif
     }
+
 
     size_t total = TotalBytes(my_stack->capacity);
 
     my_stack->temporary_array = (char *)calloc(1, total); //к сожалению массив то типа int, и вот как в него засунут 64 битовое число, я так и не понял, поэтому прибегаю к таким мерам
     if(my_stack->temporary_array == NULL){
-        StackDump(my_stack, __LINE__, __func__);
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "NULL pointer\n");
+            exit(MEMORY_ALLOCATED);
+        #endif
+
+        #ifdef DEBUG_MOD
+            StackDump(my_stack, __LINE__, __func__);
+        #endif 
     }
 
     *((long long *)my_stack->temporary_array) = my_stack->canary_l;
@@ -70,13 +95,27 @@ void StackCtor(STACK *my_stack, const int doublecup)
     my_stack->size = 0;
     my_stack->name_stack = "stack";
 
+   
     if (my_stack->array_for_elements == NULL)
     {
-        my_stack->stack_error = MEMORY_ALLOCATED;
-        StackDump(my_stack, __LINE__, __func__);
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "NULL pointer\n");
+            exit(MEMORY_ALLOCATED);
+        #endif
+
+        #ifdef DEBUG_MOD
+            my_stack->stack_error = MEMORY_ALLOCATED;
+            StackDump(my_stack, __LINE__, __func__);
+        #endif 
     }
 
-    StackOk(my_stack);
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        { 
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
 }
 
 void StackDtor(STACK *my_stack)
@@ -93,18 +132,27 @@ void StackDtor(STACK *my_stack)
 
     my_stack->canary_l = 0;
     my_stack->canary_r = 0;
-
-    CheckStackDtor(my_stack);
+    
+    #ifdef DEBUG_MOD
+        CheckStackDtor(my_stack);
+        if (my_stack->stack_error != GOOD)
+        { 
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
 }
 
 void PushB(STACK *my_stack, int value)
 { 
     CheckPointer(my_stack);
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
-    { 
-        StackDump(my_stack, __LINE__, __func__);
-    }
+
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        {    
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
 
     if (my_stack->size >= my_stack->capacity)
     { 
@@ -115,11 +163,13 @@ void PushB(STACK *my_stack, int value)
     my_stack->array_for_elements[my_stack->size] = value;
     my_stack->size++;
 
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
-    {
-        StackDump(my_stack, __LINE__, __func__);
-    }
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        {
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
 
 }
 
@@ -127,16 +177,25 @@ void PopA(STACK *my_stack)
 { 
     CheckPointer(my_stack);
 
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
-    {
-        StackDump(my_stack, __LINE__, __func__);
-    }
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        {
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif 
 
     if (my_stack->size <= 0)
     {
-        my_stack->stack_error = SIZE_IS_NEGATIV;
-        StackDump(my_stack, __LINE__, __func__);
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "The size is negativ\n");
+            exit(SIZE_IS_NEGATIV);
+        #endif
+
+        #ifdef DEBUG_MOD
+            my_stack->stack_error = SIZE_IS_NEGATIV;
+            StackDump(my_stack, __LINE__, __func__);
+        #endif
     }
 
     my_stack->size--; //удалили элемент
@@ -147,11 +206,13 @@ void PopA(STACK *my_stack)
         ResizeArray(my_stack, new_capacity);
     }
 
-    StackOk(my_stack);
-    if (my_stack->stack_error != GOOD)
-    { 
-        StackDump(my_stack, __LINE__, __func__);
-    }
+    #ifdef DEBUG_MOD
+        StackOk(my_stack);
+        if (my_stack->stack_error != GOOD)
+        {    
+            StackDump(my_stack, __LINE__, __func__);
+        }
+    #endif
     
 }
 

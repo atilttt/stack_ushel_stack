@@ -3,48 +3,22 @@
 
 --------------------------------------------------------
 Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 75 line
-"PopA" caused the dump
-ERROR CODE: 544
+THE DUMP WAS CAUSED BY 71 line
+"StackCtor" caused the dump
+ERROR CODE: 200
 --------------------------------------------------------
-As we can see, the size is negative, does this even happen?
+Brother, why is our capacity negative?(maybee zero)
 
 ================================================
 Brief description of the stack
 ================================================
-The address of the first element --> 0x6080ced756b0 
-The address of the last element --> 0x6080ced756b0 
-Stack address --> 0x7ffcb15d9040
-Number of stack elements --> 0
-Capacity stack --> 2
-Name stack --> stack
-================================================
-================================================
-
-
-========== GOODBAY ==========
-
-========== WELCOME TO THE STACK ==========
-
-
---------------------------------------------------------
-Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 140 line
-"PopA" caused the dump
-ERROR CODE: 544
---------------------------------------------------------
-As we can see, the size is negative, does this even happen?
-
-================================================
-Brief description of the stack
-================================================
-The name stack --> stack 
-Capacity stack --> 10 
+The name stack --> (null) 
+Capacity stack --> -10 
 Size stack --> 0
-Stack address --> 0x7ffca3d6d760
-The adress of the last element --> 0x62829787b6ec
-The address of the penultimate element --> 0x62829787b6e8
-The address of the first element --> 0x62829787b6c8
+Stack address --> 0x7ffc391bb0d0
+The adress of the last element --> 0xffffffffffffffd4
+The address of the penultimate element --> 0xffffffffffffffd0
+The address of the first element --> (nil)
 ================================================
 ================================================
 
