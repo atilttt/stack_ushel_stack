@@ -1,9 +1,16 @@
 #include "stack_ushel_stack.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
     STACK my_stack = {};
     
+
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+    { 
+        Instruction();
+        return 0;
+    }
+
     int capacity = 0;
     scanf("%d", &capacity);
 

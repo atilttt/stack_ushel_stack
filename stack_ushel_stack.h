@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 
+
 //=====================================//
 
 typedef struct my_stack
@@ -31,7 +32,7 @@ typedef struct my_stack
 /**
  * @brief функция, описывающая программу
  */
-void Instruction();
+void Instruction(void);
 
 /**
  * @brief функция для подсчета общего количества бит для выделения памяти

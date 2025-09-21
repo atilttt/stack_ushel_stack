@@ -229,3 +229,21 @@ void PrintStack(STACK *my_stack)
     }
     
 }
+
+void Instruction(void)
+{
+    printf("=============================================\n");
+    printf("           STACK PROGRAM INSTRUCTION         \n");
+    printf("=============================================\n");
+    printf("Usage: ./stack_program [OPTIONS]\n\n");
+    printf("OPTIONS:\n");
+    printf("  -h, --help    Show this help message\n");
+    printf("  (no args)     Run interactive stack demo\n\n");
+    printf("FEATURES:\n");
+    printf("  - Stack with canary protection\n");
+    printf("  - Automatic memory management\n");
+    printf("  - Overflow detection\n");
+    printf("  - Error logging to file(if you have the debug mode enabled)\n");
+    printf("  - To enable debug mode, comment out the line #define NORMAL_MOD\n");
+    printf("=============================================\n");
+}
