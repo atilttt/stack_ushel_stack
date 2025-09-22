@@ -6,7 +6,9 @@
 void CanaryDivision(int *canary_older, int *canary_junior)
 { 
     *canary_junior = (int)(CANARY_VALUE & MASK);
-    *canary_older = (int)((CANARY_VALUE >> 32) & MASK); 
+    printf("%x\n", *canary_junior);
+    *canary_older = (int)((CANARY_VALUE >> 32) & MASK);
+    printf("%x\n", *canary_older); 
 }
 
 long long CanaryRestoring(int canary_older, int canary_start)
@@ -53,7 +55,6 @@ void ResizeArray(STACK *my_stack, int new_capacity)
     my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
 
     
-
     #ifdef DEBUG_MOD
         StackOk(my_stack);
         if (my_stack->stack_error != GOOD)
@@ -91,7 +92,7 @@ void StackCtor(STACK *my_stack, const int doublecup)
 
     my_stack->array_for_elements = (int*)calloc(total / sizeof(int), sizeof(int));
 
-    int canary_older, canary_junior = 0; // создаем две переменные для деления нашей канарейки
+    int canary_older, canary_junior = CANARY_VALUE; // создаем две переменные для деления нашей канарейки
     CanaryDivision(&canary_older,&canary_junior);  //сообственно делим нашу канарейку, передаем адреса по понятной причине
     my_stack->array_for_elements[0] = canary_older; //канарейка устанавливается в начало
     my_stack->array_for_elements[1] = canary_junior; 
@@ -100,7 +101,6 @@ void StackCtor(STACK *my_stack, const int doublecup)
     my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
 
     my_stack->array_for_elements += 2;
-
 
     if (!my_stack->array_for_elements){
     #ifdef NORMAL_MOD

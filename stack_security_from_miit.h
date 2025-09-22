@@ -8,7 +8,7 @@
 
 #include "stack_ushel_stack.h"
 
-static long long CANARY_VALUE = 0xDEADCAFEDEADCAFE;
+static long long CANARY_VALUE = 0xDEADCAFEDEADCAFEULL;
 static long long MASK = 0xFFFFFFFF;
 
 typedef enum    
