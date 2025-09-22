@@ -6,7 +6,7 @@
 //#define NORMAL_MOD
 
 
-#include "stack_ushel_stack.h"
+#include "stack.h"
 
 static long long CANARY_VALUE = 0xDEADCAFEDEADCAFEULL;
 static long long MASK = 0xFFFFFFFF;
