@@ -3,20 +3,34 @@
 
 
 
-static size_t TotalBytes(int capacity)
-{
-
-    return sizeof(long long) + sizeof(int) * capacity + sizeof(long long);
+void CanaryDivision(int *canary_older, int *canary_junior)
+{ 
+    *canary_junior = (int)(CANARY_VALUE & MASK);
+    *canary_older = (int)((CANARY_VALUE >> 32) & MASK); 
 }
 
-static void ResizeArray(STACK *my_stack, int new_capacity)
+long long CanaryRestoring(int canary_older, int canary_start)
+{ 
+    return ((long long)canary_older << 32) | (long long)canary_start; 
+}
+
+size_t TotalBytes(int capacity)
+{
+
+    return sizeof(int) * (capacity + 4);
+}
+
+
+
+void ResizeArray(STACK *my_stack, int new_capacity)
 {
     CheckPointer(my_stack);
 
     size_t new_total = TotalBytes(new_capacity);
+    my_stack->array_for_elements -= 2; //сдвигаем указатель на начало
 
-    char *new_temporary_array_for_realloc = (char *)realloc(my_stack->temporary_array, new_total);
-    if (!new_temporary_array_for_realloc)
+    int *temp_array = (int*) realloc(my_stack->array_for_elements, sizeof(int) * (new_capacity + 4));
+    if (!temp_array)
     { 
         #ifdef NORMAL_MOD
             fprintf(stderr, "NULL pointer");
@@ -29,13 +43,16 @@ static void ResizeArray(STACK *my_stack, int new_capacity)
         #endif
     }
 
-    my_stack->temporary_array = new_temporary_array_for_realloc;
-
-    *((long long *)(my_stack->temporary_array)) = my_stack->canary_l;
-    *((long long *)(my_stack->temporary_array + sizeof(long long) + new_capacity * sizeof(int))) = my_stack->canary_r;
-
-    my_stack->array_for_elements = (int *)(my_stack->temporary_array + sizeof(long long));
+    my_stack->array_for_elements += 2;
     my_stack->capacity = new_capacity;
+
+    int canary_older, canary_junior = 0;
+    CanaryDivision(&canary_older, &canary_junior);
+
+    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older;
+    my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
+
+    
 
     #ifdef DEBUG_MOD
         StackOk(my_stack);
@@ -44,9 +61,6 @@ static void ResizeArray(STACK *my_stack, int new_capacity)
             StackDump(my_stack, __LINE__, __func__);
         }
     #endif
-    
-        
-
 }
 
 
@@ -75,22 +89,31 @@ void StackCtor(STACK *my_stack, const int doublecup)
 
     size_t total = TotalBytes(my_stack->capacity);
 
-    my_stack->temporary_array = (char *)calloc(1, total); //к сожалению массив то типа int, и вот как в него засунут 64 битовое число, я так и не понял, поэтому прибегаю к таким мерам
-    if(my_stack->temporary_array == NULL){
-        #ifdef NORMAL_MOD
-            fprintf(stderr, "NULL pointer\n");
-            exit(MEMORY_ALLOCATED);
-        #endif
+    my_stack->array_for_elements = (int*)calloc(total / sizeof(int), sizeof(int));
 
-        #ifdef DEBUG_MOD
-            StackDump(my_stack, __LINE__, __func__);
-        #endif 
+    int canary_older, canary_junior = 0; // создаем две переменные для деления нашей канарейки
+    CanaryDivision(&canary_older,&canary_junior);  //сообственно делим нашу канарейку, передаем адреса по понятной причине
+    my_stack->array_for_elements[0] = canary_older; //канарейка устанавливается в начало
+    my_stack->array_for_elements[1] = canary_junior; 
+    
+    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older;
+    my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
+
+    my_stack->array_for_elements += 2;
+
+
+    if (!my_stack->array_for_elements){
+    #ifdef NORMAL_MOD
+        fprintf(stderr, "NULL pointer\n");
+        exit(MEMORY_ALLOCATED);
+    #endif
+
+    #ifdef DEBUG_MOD
+        StackDump(my_stack, __LINE__, __func__);
+    #endif 
     }
 
-    *((long long *)my_stack->temporary_array) = my_stack->canary_l;
-    *((long long *)(my_stack->temporary_array + sizeof(long long) + sizeof(int) * my_stack->capacity)) = my_stack->canary_r; //установили две канарейки
-
-    my_stack->array_for_elements = (int *)(my_stack->temporary_array + sizeof(long long));
+   
 
     my_stack->size = 0;
     my_stack->name_stack = "stack";
@@ -122,16 +145,16 @@ void StackDtor(STACK *my_stack)
 { 
     CheckPointer(my_stack);
 
-    free(my_stack->temporary_array);
+    my_stack->array_for_elements -= 2; //возвращаем указатель на место (на начало)
+    free(my_stack->array_for_elements);
 
-    my_stack->temporary_array = NULL;
+    my_stack->array_for_elements = NULL;
     my_stack->capacity = 0;
     my_stack->size = 0;
     my_stack->name_stack = NULL;
-    my_stack->array_for_elements = NULL;
-
     my_stack->canary_l = 0;
     my_stack->canary_r = 0;
+    my_stack->stack_error = GOOD;
     
     #ifdef DEBUG_MOD
         CheckStackDtor(my_stack);

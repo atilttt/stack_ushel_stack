@@ -3,49 +3,21 @@
 
 --------------------------------------------------------
 Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 71 line
+THE DUMP WAS CAUSED BY 139 line
 "StackCtor" caused the dump
-ERROR CODE: 200
+ERROR CODE: 201
 --------------------------------------------------------
-Brother, why is our capacity negative?(maybee zero)
-
+The canary lying in the array on the left has died
 ================================================
 Brief description of the stack
 ================================================
-The name stack --> (null) 
-Capacity stack --> -10 
+The name stack --> stack 
+Capacity stack --> 10 
 Size stack --> 0
-Stack address --> 0x7ffc391bb0d0
-The adress of the last element --> 0xffffffffffffffd4
-The address of the penultimate element --> 0xffffffffffffffd0
-The address of the first element --> (nil)
-================================================
-================================================
-
-
-========== GOODBAY ==========
-
-========== WELCOME TO THE STACK ==========
-
-
---------------------------------------------------------
-Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 71 line
-"StackCtor" caused the dump
-ERROR CODE: 200
---------------------------------------------------------
-Brother, why is our capacity negative?(maybee zero)
-
-================================================
-Brief description of the stack
-================================================
-The name stack --> (null) 
-Capacity stack --> 0 
-Size stack --> 0
-Stack address --> 0x7ffe13ea3d00
-The adress of the last element --> 0xfffffffffffffffc
-The address of the penultimate element --> 0xfffffffffffffff8
-The address of the first element --> (nil)
+Stack address --> 0x7ffe996bbe20
+The adress of the last element --> 0x597a1a0aa6dc
+The address of the penultimate element --> 0x597a1a0aa6d8
+The address of the first element --> 0x597a1a0aa6b8
 ================================================
 ================================================
 

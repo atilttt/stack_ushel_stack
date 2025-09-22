@@ -18,6 +18,29 @@ ERORRS StackOk(STACK *my_stack)
         return CANARY_LEFT_DEAD;
     }
 
+    if (my_stack->array_for_elements != NULL)
+    { 
+        int *canary_older_left = my_stack->array_for_elements - 2;
+        int *canary_junior_left = my_stack->array_for_elements - 1;
+
+        int *canary_older_right = my_stack->array_for_elements + my_stack->capacity + 2;
+        int *canary_junior_right = my_stack->array_for_elements + my_stack->capacity + 3;
+
+        long long canary_left_in_buffer = CanaryRestoring(*canary_older_left, *canary_junior_left);
+        long long canary_right_in_buffer = CanaryRestoring(*canary_older_right, *canary_junior_right);
+
+        if (canary_left_in_buffer != CANARY_VALUE)
+        { 
+            my_stack->stack_error = CANARY_LEFT_IN_BUFFER_DEAD;
+            return CANARY_RIGHT_IN_BUFFER_DEAD; 
+        }
+        if (canary_right_in_buffer != CANARY_VALUE)
+        {
+            my_stack->stack_error = CANARY_RIGHT_IN_BUFFER_DEAD;
+            return CANARY_RIGHT_IN_BUFFER_DEAD;
+        }
+    }
+
     if(my_stack->size < 0)
     { 
         my_stack->stack_error = SIZE_IS_NEGATIV;
@@ -36,7 +59,7 @@ ERORRS StackOk(STACK *my_stack)
         return STACK_OVERFLOW;
     }
 
-    if (my_stack->temporary_array == NULL || my_stack->array_for_elements == NULL)
+    if (my_stack->array_for_elements == NULL)
     { 
         my_stack->stack_error = MEMORY_ALLOCATED;
         return MEMORY_ALLOCATED;
@@ -93,7 +116,7 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
 { 
     CheckPointer(my_stack);
 
-    FILE *log = fopen("log.txt", "a");
+    FILE *log = fopen("log.txt", "w");
     assert(log);
     fprintf(log, "========== WELCOME TO THE STACK ==========\n\n\n");
     
@@ -130,6 +153,12 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
         case CANARY_LEFT_DEAD:
             fprintf(log, "The left canary is dead\n");
             break;
+        case CANARY_RIGHT_IN_BUFFER_DEAD:
+            fprintf(log, "The canary lying in the array on the right has died\n");
+            break;
+        case CANARY_LEFT_IN_BUFFER_DEAD:
+            fprintf(log, "The canary lying in the array on the left has died");
+            break;    
         default:
             fprintf(log, "And where is the stack name?\n");
             exit(CRITICAL_ERROR); //тоже самое

@@ -8,7 +8,8 @@
 
 #include "stack_ushel_stack.h"
 
-static long long CANARY_VALUE = 0xDEADCAFEDEADCAFEULL;
+static long long CANARY_VALUE = 0xDEADCAFEDEADCAFE;
+static long long MASK = 0xFFFFFFFF;
 
 typedef enum    
 { 
@@ -21,8 +22,11 @@ typedef enum
     CHIVO = 403,
     STACK_DTOR_ERROR = 401, //я решил особо не распинаться почему неправильно отработал деструктор, сразу просто ошибка и понятно где она
 
-    CANARY_RIGHT_DEAD = 303,
-    CANARY_LEFT_DEAD = 301,
+    CANARY_RIGHT_DEAD = 303, 
+    CANARY_LEFT_DEAD = 301, // эти ошибки говорят, что канарейка в структуре умерла
+
+    CANARY_LEFT_IN_BUFFER_DEAD = 201, //эти говорят, что канарейка в массиве умерла
+    CANARY_RIGHT_IN_BUFFER_DEAD = 202,
 
     GOOD = 0 
 } ERORRS;
