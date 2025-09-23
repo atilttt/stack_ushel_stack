@@ -21,11 +21,11 @@ int main(int argc, char **argv)
 
 
     
-    // PushB(&my_stack, 2);
-    // PushB(&my_stack, 3);
-    // PushB(&my_stack, 1321);
-    // PushB(&my_stack, 134);
-    // PrintStack(&my_stack);
+    PushB(&my_stack, 2);
+    PushB(&my_stack, 3);
+    PushB(&my_stack, 1321);
+    PushB(&my_stack, 134);
+    PrintStack(&my_stack);
     
     // printf("%d", my_stack.capacity);
 

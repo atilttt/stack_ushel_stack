@@ -20,14 +20,14 @@ ERORRS StackOk(STACK *my_stack)
 
     if (my_stack->array_for_elements != NULL)
     { 
-        int *canary_older_left = my_stack->array_for_elements - 2;
-        int *canary_junior_left = my_stack->array_for_elements - 1;
+        unsigned int canary_older_left = my_stack->array_for_elements[-2];
+        unsigned int canary_junior_left = my_stack->array_for_elements[-1];
 
-        int *canary_older_right = my_stack->array_for_elements + my_stack->capacity + 2;
-        int *canary_junior_right = my_stack->array_for_elements + my_stack->capacity + 3;
+        unsigned int canary_older_right = my_stack->array_for_elements[my_stack->capacity];
+        unsigned int canary_junior_right = my_stack->array_for_elements[my_stack->capacity + 1];
 
-        long long canary_left_in_buffer = CanaryRestoring(*canary_older_left, *canary_junior_left);
-        long long canary_right_in_buffer = CanaryRestoring(*canary_older_right, *canary_junior_right);
+        unsigned long long canary_left_in_buffer = CanaryRestoring(canary_older_left, canary_junior_left);
+        unsigned long long canary_right_in_buffer = CanaryRestoring(canary_older_right, canary_junior_right);
 
         if (canary_left_in_buffer != CANARY_VALUE)
         { 

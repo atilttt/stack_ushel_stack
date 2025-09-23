@@ -6,12 +6,12 @@
 void CanaryDivision(int *canary_older, int *canary_junior)
 { 
     *canary_junior = (int)(CANARY_VALUE & MASK);
-    printf("%x\n", *canary_junior);
+    //printf("%x\n", *canary_junior);
     *canary_older = (int)((CANARY_VALUE >> 32) & MASK);
-    printf("%x\n", *canary_older); 
+    //printf("%x\n", *canary_older); 
 }
 
-long long CanaryRestoring(int canary_older, int canary_start)
+long long CanaryRestoring(unsigned int canary_older, unsigned int canary_start)
 { 
     return ((long long)canary_older << 32) | (long long)canary_start; 
 }
@@ -97,9 +97,9 @@ void StackCtor(STACK *my_stack, const int doublecup)
     my_stack->array_for_elements[0] = canary_older; //канарейка устанавливается в начало
     my_stack->array_for_elements[1] = canary_junior; 
     
-    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older;
+    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older; //и в конец
     my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
-
+    
     my_stack->array_for_elements += 2;
 
     if (!my_stack->array_for_elements){

@@ -16,16 +16,16 @@
 
 typedef struct my_stack
 {
-    long long canary_l;
+    unsigned long long canary_l;
 
     int stack_error;
     
     const char *name_stack;  
-    int capacity;
-    int size;
+    unsigned int capacity;
+    unsigned int size;
     int *array_for_elements; //основной массив куда будем сохранять наши элементы
     
-    long long canary_r;
+    unsigned long long canary_r;
 } STACK;
 
 
@@ -48,7 +48,7 @@ void CanaryDivision(int *canary_older, int *canary_junior);
  * @param canary_e1, canary_e2 тоже страшие и младшие разряды по 32 бита, но эта функция склеивающая эти два разряда 
           Потому что нам надо организовать проверку нашей канарейки, как в структуре, так и в массиве 
 */
-long long CanaryRestoring(int canary_older, int canary_junior);
+long long CanaryRestoring(unsigned int canary_older, unsigned int canary_junior);
 
 /**
  * @brief функция для подсчета общего количества бит для выделения памяти
