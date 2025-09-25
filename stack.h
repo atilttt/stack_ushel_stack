@@ -16,13 +16,13 @@
 
 typedef struct my_stack
 {
-    unsigned long long canary_l;
+    unsigned long long canary_l; 
 
     int stack_error;
     
     const char *name_stack;  
-    unsigned int capacity;
-    unsigned int size;
+    int capacity;
+    int size;
     int *array_for_elements; //основной массив куда будем сохранять наши элементы
     
     unsigned long long canary_r;
@@ -40,7 +40,7 @@ void Instruction(void);
  * @brief функция для деления побитово канарейки
  * @param canary_d1, canary_d2 указатели типа инт, а именно два указателя которые будут хранить страшие 32 бита и младшие 32 бита канарейки (левой и правой)
  */
-void CanaryDivision(int *canary_older, int *canary_junior);
+void CanaryDivision(unsigned int *canary_older, unsigned int *canary_junior);
 
 
 /**
@@ -67,11 +67,9 @@ void ResizeArray(STACK *my_stack, int new_capacity);
  * @brief конструктор для стека
  * @param my_stack указатель на структуру
  * @param doublecap некая емкость стека(максимальное кол-во элементов) (кидаем как константу, обещая, что здесь они не изменится)
- * @param symbol_for_macros символ для макроса, который позволяет пользователю
- *                          а)ввести имя стека руками
- *                          б)поставить имя по дефолту
+ * @param const char *name_stack
  */
-void StackCtor(STACK *my_stack, const int doublecap);
+void StackCtor(STACK *my_stack, const int doublecap, const char *name_stack);
 
 /**
  * @brief деструктор для стека

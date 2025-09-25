@@ -20,11 +20,11 @@ ERORRS StackOk(STACK *my_stack)
 
     if (my_stack->array_for_elements != NULL)
     { 
-        unsigned int canary_older_left = my_stack->array_for_elements[-2];
+        unsigned int canary_older_left = my_stack->array_for_elements[-2]; 
         unsigned int canary_junior_left = my_stack->array_for_elements[-1];
 
-        unsigned int canary_older_right = my_stack->array_for_elements[my_stack->capacity];
-        unsigned int canary_junior_right = my_stack->array_for_elements[my_stack->capacity + 1];
+        unsigned int canary_older_right = my_stack->array_for_elements[my_stack->size];
+        unsigned int canary_junior_right = my_stack->array_for_elements[my_stack->size + 1];
 
         unsigned long long canary_left_in_buffer = CanaryRestoring(canary_older_left, canary_junior_left);
         unsigned long long canary_right_in_buffer = CanaryRestoring(canary_older_right, canary_junior_right);
@@ -32,7 +32,7 @@ ERORRS StackOk(STACK *my_stack)
         if (canary_left_in_buffer != CANARY_VALUE)
         { 
             my_stack->stack_error = CANARY_LEFT_IN_BUFFER_DEAD;
-            return CANARY_RIGHT_IN_BUFFER_DEAD; 
+            return CANARY_LEFT_IN_BUFFER_DEAD; 
         }
         if (canary_right_in_buffer != CANARY_VALUE)
         {
@@ -47,7 +47,7 @@ ERORRS StackOk(STACK *my_stack)
         return SIZE_IS_NEGATIV;
     }
 
-    if (my_stack->capacity <= 0)
+    if (my_stack->capacity < 0)
     {
         my_stack->stack_error = CAPACITY_IS_NEGATIVE; //ну возможно и ноль, что тоже странно 
         return CAPACITY_IS_NEGATIVE; 
@@ -133,7 +133,7 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
             fprintf(log, "As we can see, the size is negative, does this even happen?\n");
             break;
         case CAPACITY_IS_NEGATIVE:
-            fprintf(log, "Brother, why is our capacity negative?(maybee zero)\n");
+            fprintf(log, "Brother, why is our capacity negative?\n");
             break;
         case STACK_OVERFLOW:
             fprintf(log, "size > capacity ---> STACK OVERFLOW\n");

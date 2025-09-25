@@ -3,11 +3,11 @@
 
 
 
-void CanaryDivision(int *canary_older, int *canary_junior)
+void CanaryDivision(unsigned int *canary_older, unsigned int *canary_junior)
 { 
-    *canary_junior = (int)(CANARY_VALUE & MASK);
+    *canary_junior = (unsigned int)(CANARY_VALUE & MASK);
     //printf("%x\n", *canary_junior);
-    *canary_older = (int)((CANARY_VALUE >> 32) & MASK);
+    *canary_older = (unsigned int)((CANARY_VALUE >> 32) & MASK);
     //printf("%x\n", *canary_older); 
 }
 
@@ -29,32 +29,30 @@ void ResizeArray(STACK *my_stack, int new_capacity)
     CheckPointer(my_stack);
 
     size_t new_total = TotalBytes(new_capacity);
-    my_stack->array_for_elements -= 2; //сдвигаем указатель на начало
+    int *tempary = my_stack->array_for_elements - 2;
 
-    int *temp_array = (int*) realloc(my_stack->array_for_elements, sizeof(int) * (new_capacity + 4));
+    int *temp_array = (int*)realloc(tempary, new_total);
     if (!temp_array)
     { 
-        #ifdef NORMAL_MOD
-            fprintf(stderr, "NULL pointer");
+        #ifdef NORMAL_MODE
+            fprintf(stderr, "nenory allocated\n");
             exit(MEMORY_ALLOCATED);
-        #endif
+        #endif 
 
         #ifdef DEBUG_MOD
-            my_stack->stack_error = MEMORY_ALLOCATED;
             StackDump(my_stack, __LINE__ , __func__);
         #endif
     }
 
-    my_stack->array_for_elements += 2;
+    my_stack->array_for_elements = temp_array + 2;
     my_stack->capacity = new_capacity;
 
-    int canary_older, canary_junior = 0;
+    unsigned int canary_older, canary_junior = 0;
     CanaryDivision(&canary_older, &canary_junior);
 
-    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older;
-    my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
+    my_stack->array_for_elements[my_stack->size] = (int)canary_older;
+    my_stack->array_for_elements[my_stack->size + 1] = (int)canary_junior;
 
-    
     #ifdef DEBUG_MOD
         StackOk(my_stack);
         if (my_stack->stack_error != GOOD)
@@ -65,7 +63,7 @@ void ResizeArray(STACK *my_stack, int new_capacity)
 }
 
 
-void StackCtor(STACK *my_stack, const int doublecup)
+void StackCtor(STACK *my_stack, const int doublecup, const char *name_stack)
 {
     CheckPointer(my_stack);
 
@@ -74,7 +72,7 @@ void StackCtor(STACK *my_stack, const int doublecup)
     my_stack->canary_l = CANARY_VALUE;
 
     my_stack->capacity = doublecup;
-    if (my_stack->capacity <= 0)
+    if (my_stack->capacity < 0)
     {
         #ifdef NORMAL_MOD
             fprintf(stderr, "Capacity is negative\n");
@@ -92,13 +90,13 @@ void StackCtor(STACK *my_stack, const int doublecup)
 
     my_stack->array_for_elements = (int*)calloc(total / sizeof(int), sizeof(int));
 
-    int canary_older, canary_junior = CANARY_VALUE; // создаем две переменные для деления нашей канарейки
+    unsigned int canary_older, canary_junior = 0; // создаем две переменные для деления нашей канарейки
     CanaryDivision(&canary_older,&canary_junior);  //сообственно делим нашу канарейку, передаем адреса по понятной причине
     my_stack->array_for_elements[0] = canary_older; //канарейка устанавливается в начало
     my_stack->array_for_elements[1] = canary_junior; 
-    
-    my_stack->array_for_elements[my_stack->capacity + 2] = canary_older; //и в конец
-    my_stack->array_for_elements[my_stack->capacity + 3] = canary_junior;
+
+    my_stack->array_for_elements[my_stack->size + 2] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 3] = canary_junior;
     
     my_stack->array_for_elements += 2;
 
@@ -116,7 +114,7 @@ void StackCtor(STACK *my_stack, const int doublecup)
    
 
     my_stack->size = 0;
-    my_stack->name_stack = "stack";
+    my_stack->name_stack = name_stack;
 
    
     if (my_stack->array_for_elements == NULL)
@@ -184,6 +182,13 @@ void PushB(STACK *my_stack, int value)
     }
 
     my_stack->array_for_elements[my_stack->size] = value;
+
+    unsigned int canary_older, canary_junior = 0;
+    CanaryDivision(&canary_older, &canary_junior);
+
+    my_stack->array_for_elements[my_stack->size + 1] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 2] = canary_junior;
+
     my_stack->size++;
 
     #ifdef DEBUG_MOD
@@ -223,9 +228,16 @@ void PopA(STACK *my_stack)
 
     my_stack->size--; //удалили элемент
 
+    unsigned int canary_older, canary_junior = 0;
+    CanaryDivision(&canary_older, &canary_junior);
+
+    my_stack->array_for_elements[my_stack->size + 1] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 2] = canary_junior;
+
+
     if ((my_stack->size < my_stack->capacity / 4) && my_stack->capacity > 4)
     {
-        int new_capacity = my_stack->capacity/2;
+        int new_capacity = my_stack->capacity / 2;
         ResizeArray(my_stack, new_capacity);
     }
 

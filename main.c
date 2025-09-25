@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
     int capacity = 0;
     scanf("%d", &capacity);
-    StackCtor(&my_stack, capacity);
+    StackCtor(&my_stack, capacity, "lol_eshkere");
 
 
     
