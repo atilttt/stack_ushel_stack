@@ -6,14 +6,12 @@
 void CanaryDivision(unsigned int *canary_older, unsigned int *canary_junior)
 { 
     *canary_junior = (unsigned int)(CANARY_VALUE & MASK);
-    //printf("%x\n", *canary_junior);
-    *canary_older = (unsigned int)((CANARY_VALUE >> 32) & MASK);
-    //printf("%x\n", *canary_older); 
+    *canary_older = (unsigned int)((CANARY_VALUE >> 32) & MASK); 
 }
 
-long long CanaryRestoring(unsigned int canary_older, unsigned int canary_start)
+unsigned long long CanaryRestoring(unsigned int canary_older, unsigned int canary_start)
 { 
-    return ((long long)canary_older << 32) | (long long)canary_start; 
+    return ((unsigned long long)canary_older << 32) | (long long)canary_start; 
 }
 
 size_t TotalBytes(int capacity)
@@ -34,8 +32,8 @@ void ResizeArray(STACK *my_stack, int new_capacity)
     int *temp_array = (int*)realloc(tempary, new_total);
     if (!temp_array)
     { 
-        #ifdef NORMAL_MODE
-            fprintf(stderr, "nenory allocated\n");
+        #ifdef NORMAL_MOD
+            fprintf(stderr, "memory allocated\n");
             exit(MEMORY_ALLOCATED);
         #endif 
 
@@ -70,8 +68,11 @@ void StackCtor(STACK *my_stack, const int doublecup, const char *name_stack)
 
     my_stack->canary_r = CANARY_VALUE;
     my_stack->canary_l = CANARY_VALUE;
-
+    
     my_stack->capacity = doublecup;
+    my_stack->size = 0;
+    my_stack->name_stack = name_stack;
+
     if (my_stack->capacity < 0)
     {
         #ifdef NORMAL_MOD
@@ -89,17 +90,6 @@ void StackCtor(STACK *my_stack, const int doublecup, const char *name_stack)
     size_t total = TotalBytes(my_stack->capacity);
 
     my_stack->array_for_elements = (int*)calloc(total / sizeof(int), sizeof(int));
-
-    unsigned int canary_older, canary_junior = 0; // создаем две переменные для деления нашей канарейки
-    CanaryDivision(&canary_older,&canary_junior);  //сообственно делим нашу канарейку, передаем адреса по понятной причине
-    my_stack->array_for_elements[0] = canary_older; //канарейка устанавливается в начало
-    my_stack->array_for_elements[1] = canary_junior; 
-
-    my_stack->array_for_elements[my_stack->size + 2] = canary_older;
-    my_stack->array_for_elements[my_stack->size + 3] = canary_junior;
-    
-    my_stack->array_for_elements += 2;
-
     if (!my_stack->array_for_elements){
     #ifdef NORMAL_MOD
         fprintf(stderr, "NULL pointer\n");
@@ -111,24 +101,17 @@ void StackCtor(STACK *my_stack, const int doublecup, const char *name_stack)
     #endif 
     }
 
-   
+    unsigned int canary_older, canary_junior = 0; // создаем две переменные для деления нашей канарейки
+    CanaryDivision(&canary_older,&canary_junior);  //сообственно делим нашу канарейку, передаем адреса по понятной причине
+    my_stack->array_for_elements[my_stack->size] = canary_older; //канарейка устанавливается в начало
+    my_stack->array_for_elements[my_stack->size + 1] = canary_junior; 
 
-    my_stack->size = 0;
-    my_stack->name_stack = name_stack;
+    my_stack->array_for_elements[my_stack->size + 2] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 3] = canary_junior;
+    
+    my_stack->array_for_elements += 2;
 
-   
-    if (my_stack->array_for_elements == NULL)
-    {
-        #ifdef NORMAL_MOD
-            fprintf(stderr, "NULL pointer\n");
-            exit(MEMORY_ALLOCATED);
-        #endif
-
-        #ifdef DEBUG_MOD
-            my_stack->stack_error = MEMORY_ALLOCATED;
-            StackDump(my_stack, __LINE__, __func__);
-        #endif 
-    }
+    my_stack->hash = HashForStruct(my_stack); 
 
     #ifdef DEBUG_MOD
         StackOk(my_stack);
@@ -191,6 +174,8 @@ void PushB(STACK *my_stack, int value)
 
     my_stack->size++;
 
+    my_stack->hash = HashForStruct(my_stack); 
+
     #ifdef DEBUG_MOD
         StackOk(my_stack);
         if (my_stack->stack_error != GOOD)
@@ -241,6 +226,8 @@ void PopA(STACK *my_stack)
         ResizeArray(my_stack, new_capacity);
     }
 
+    my_stack->hash = HashForStruct(my_stack); 
+
     #ifdef DEBUG_MOD
         StackOk(my_stack);
         if (my_stack->stack_error != GOOD)
@@ -260,7 +247,7 @@ void PrintStack(STACK *my_stack)
     
     for (size_t i = 0; i < my_stack->size; i++)
     {
-        printf("[%zu] element ---> %d\n", i, my_stack->array_for_elements[i]);
+        printf("%zu element ---> [%d]\n", i, my_stack->array_for_elements[i]);
     }
     
 }

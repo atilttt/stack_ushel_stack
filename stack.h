@@ -25,6 +25,8 @@ typedef struct my_stack
     int size;
     int *array_for_elements; //основной массив куда будем сохранять наши элементы
     
+    unsigned long long hash;
+
     unsigned long long canary_r;
 } STACK;
 
@@ -48,7 +50,7 @@ void CanaryDivision(unsigned int *canary_older, unsigned int *canary_junior);
  * @param canary_e1, canary_e2 тоже страшие и младшие разряды по 32 бита, но эта функция склеивающая эти два разряда 
           Потому что нам надо организовать проверку нашей канарейки, как в структуре, так и в массиве 
 */
-long long CanaryRestoring(unsigned int canary_older, unsigned int canary_junior);
+unsigned long long CanaryRestoring(unsigned int canary_older, unsigned int canary_junior);
 
 /**
  * @brief функция для подсчета общего количества бит для выделения памяти

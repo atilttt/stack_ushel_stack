@@ -2,6 +2,65 @@
 #include <stdio.h>
 #include "stack_security_from_miit.h"
 
+
+
+unsigned long long SimpleRot(unsigned long long n)
+{
+    n ^= (n >> 3);
+    return (n << 7) | (n >> (64 - 7));
+}
+
+unsigned long long HashForStruct(STACK *my_stack)
+{
+    CheckPointer(my_stack);
+
+    unsigned long long hash = 0xABCDEF1234567890ULL; 
+
+    hash ^= SimpleRot((unsigned long long)my_stack->canary_l);
+    hash += SimpleRot((unsigned long long)my_stack->stack_error);
+
+    if (my_stack->name_stack) {
+        const char* p = my_stack->name_stack;
+        while (*p) {
+            hash ^= SimpleRot((unsigned long long)(*p));
+            hash += 0x9E3779B9; 
+            p++;
+        }
+    }
+
+    hash ^= SimpleRot((unsigned long long)my_stack->capacity);
+    hash += SimpleRot((unsigned long long)my_stack->size);
+
+    if (my_stack->array_for_elements && my_stack->size > 0) {
+        for (int i = 0; i < my_stack->size; i++) {
+            hash ^= SimpleRot((unsigned long long)my_stack->array_for_elements[i]);
+            hash += i * 0x5bd1e995; 
+        }
+    }
+
+    hash ^= SimpleRot((unsigned long long)my_stack->canary_r);
+
+    hash ^= (hash >> 16);
+    hash *= 0x9E3779B185EBCA87ULL; 
+    hash ^= (hash >> 13);
+
+    return hash;
+}
+
+int CheckStructHach(STACK *my_stack)
+{
+    CheckPointer(my_stack);
+
+    unsigned long long hash = HashForStruct(my_stack);
+
+    if (hash != my_stack->hash)
+    {
+        return HASH_CHANGED;
+    }
+
+    return GOOD;
+}
+
 ERORRS StackOk(STACK *my_stack)
 { 
     CheckPointer(my_stack);
@@ -71,6 +130,12 @@ ERORRS StackOk(STACK *my_stack)
         return NAME_INDEFINITE;
     }
 
+    if (!CheckStructHach(my_stack))
+    {
+        my_stack->stack_error = HASH_CHANGED;
+        return HASH_CHANGED;
+    }
+
     my_stack->stack_error = GOOD;
     return GOOD;
 }
@@ -111,6 +176,7 @@ ERORRS CheckStackDtor(STACK *my_stack)
 
     return GOOD;
 }
+
 
 void StackDump(STACK *my_stack, const int line_call, const char *name_function_call)
 { 
@@ -158,6 +224,9 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
             break;
         case CANARY_LEFT_IN_BUFFER_DEAD:
             fprintf(log, "The canary lying in the array on the left has died");
+            break;
+        case HASH_CHANGED:
+            fprintf(log, "the hash has been overwritten\n");
             break;    
         default:
             fprintf(log, "And where is the stack name?\n");
@@ -176,9 +245,9 @@ The adress of the last element --> %p\n\
 The address of the penultimate element --> %p\n\
 The address of the first element --> %p\n", my_stack->name_stack, my_stack->capacity, my_stack->size, my_stack, my_stack->array_for_elements + my_stack->capacity - 1, my_stack->array_for_elements + my_stack->capacity - 2, my_stack->array_for_elements);
 
-    for (size_t i = 0; i < my_stack->size; i++) // вот сообственно тот самый сигфолт, который я тогда поймал, обратился к нулевому указателю
+    for (int i = 0; i < my_stack->size; i++) // вот сообственно тот самый сигфолт, который я тогда поймал, обратился к нулевому указателю
     {
-        fprintf(log, "[%d] ===> %zu elements\n", my_stack->array_for_elements[i], i);
+        fprintf(log, "[%d] =====> %d element\n", my_stack->array_for_elements[i], i);
     }
     fprintf(log, "================================================\n");
     fprintf(log, "================================================\n");
@@ -188,4 +257,12 @@ The address of the first element --> %p\n", my_stack->name_stack, my_stack->capa
     fclose(log);
 
     exit(CRITICAL_ERROR);
+}
+
+void unit_test(STACK *my_stack)
+{ 
+
+    
+
+
 }

@@ -19,8 +19,6 @@ int main(int argc, char **argv)
     scanf("%d", &capacity);
     StackCtor(&my_stack, capacity, "lol_eshkere");
 
-
-    
     PushB(&my_stack, 2);
     PushB(&my_stack, 3);
     PushB(&my_stack, 1321);

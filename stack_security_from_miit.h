@@ -1,6 +1,7 @@
 #ifndef STACK_SECURITY_FROM_MIIT_H
 #define STACK_SECURITY_FROM_MIIT_H
 
+#include <stdint.h>
 #define DEBUG_MOD
 
 //#define NORMAL_MOD
@@ -27,6 +28,8 @@ typedef enum
 
     CANARY_LEFT_IN_BUFFER_DEAD = 201, //эти говорят, что канарейка в массиве умерла
     CANARY_RIGHT_IN_BUFFER_DEAD = 202,
+
+    HASH_CHANGED = 1337,
 
     GOOD = 0 
 } ERORRS;
@@ -58,7 +61,28 @@ ERORRS CheckStackDtor(STACK *my_stack);
  */
 void StackDump(STACK *my_stack, const int line_call, const char *name_function_call);
 
-#else
+/**
+ * @brief функция юнит-тест так называемый, в ней будут проверки все функций, всевозможные случаи сломать стек
+ * @param *my_stack указатель на структуру
+ */
+void unit_test(STACK *my_stack);
 
+/**
+ * @brief функция перемешкивания битов
+ * @param unsigned long long n что будем перемешкивать
+ */
+unsigned long long SimpleRot(unsigned long long n);
+
+/**
+ * @brief функция создающая хеш для структуры
+ * @param STACK *my_stack указатель на структуру
+ */
+unsigned long long HashForStruct(STACK *my_stack);
+
+/**
+ * @brief функция проверяющая хеш
+ * @param STACK *my_stack указатель на структуру
+ */
+int CheckStructHach(STACK *my_stack);
 
 #endif //STACK_SECURITY_FROM_MIIT_H
