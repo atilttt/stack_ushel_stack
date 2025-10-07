@@ -160,19 +160,18 @@ void PushB(STACK *my_stack, int value)
 
     if (my_stack->size >= my_stack->capacity)
     { 
-        int new_capacity = my_stack->capacity * 2;
+        int new_capacity = (my_stack->capacity == 0) ? 4 : my_stack->capacity * 2;
         ResizeArray(my_stack, new_capacity);
     }
 
     my_stack->array_for_elements[my_stack->size] = value;
+    my_stack->size++;
 
     unsigned int canary_older, canary_junior = 0;
     CanaryDivision(&canary_older, &canary_junior);
 
-    my_stack->array_for_elements[my_stack->size + 1] = canary_older;
-    my_stack->array_for_elements[my_stack->size + 2] = canary_junior;
-
-    my_stack->size++;
+    my_stack->array_for_elements[my_stack->size] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 1] = canary_junior;
 
     my_stack->hash = HashForStruct(my_stack); 
 
@@ -183,7 +182,6 @@ void PushB(STACK *my_stack, int value)
             StackDump(my_stack, __LINE__, __func__);
         }
     #endif
-
 }
 
 void PopA(STACK *my_stack)
@@ -211,14 +209,13 @@ void PopA(STACK *my_stack)
         #endif
     }
 
-    my_stack->size--; //удалили элемент
+    my_stack->size--;
 
     unsigned int canary_older, canary_junior = 0;
     CanaryDivision(&canary_older, &canary_junior);
 
-    my_stack->array_for_elements[my_stack->size + 1] = canary_older;
-    my_stack->array_for_elements[my_stack->size + 2] = canary_junior;
-
+    my_stack->array_for_elements[my_stack->size] = canary_older;
+    my_stack->array_for_elements[my_stack->size + 1] = canary_junior;
 
     if ((my_stack->size < my_stack->capacity / 4) && my_stack->capacity > 4)
     {
@@ -235,9 +232,7 @@ void PopA(STACK *my_stack)
             StackDump(my_stack, __LINE__, __func__);
         }
     #endif
-    
 }
-
 void PrintStack(STACK *my_stack)
 {
     CheckPointer(my_stack);

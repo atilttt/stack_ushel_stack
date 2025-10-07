@@ -38,6 +38,11 @@ unsigned long long HashForStruct(STACK *my_stack)
         }
     }
 
+    if (my_stack->array_for_elements) {
+        hash ^= SimpleRot((unsigned long long)my_stack->array_for_elements[my_stack->size]);
+        hash ^= SimpleRot((unsigned long long)my_stack->array_for_elements[my_stack->size + 1]);
+    }
+
     hash ^= SimpleRot((unsigned long long)my_stack->canary_r);
 
     hash ^= (hash >> 16);
@@ -130,7 +135,7 @@ ERORRS StackOk(STACK *my_stack)
         return NAME_INDEFINITE;
     }
 
-    if (!CheckStructHach(my_stack))
+    if (CheckStructHach(my_stack) != GOOD)
     {
         my_stack->stack_error = HASH_CHANGED;
         return HASH_CHANGED;

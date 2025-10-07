@@ -3,22 +3,22 @@
 
 --------------------------------------------------------
 Let's see what the silent verification has brought out.
-THE DUMP WAS CAUSED BY 84 line
+THE DUMP WAS CAUSED BY 120 line
 "StackCtor" caused the dump
-ERROR CODE: 200
+ERROR CODE: 1337
 --------------------------------------------------------
-Brother, why is our capacity negative?
+the hash has been overwritten
 
 ================================================
 Brief description of the stack
 ================================================
-The name stack --> (null) 
-Capacity stack --> -1 
+The name stack --> lol_eshkere 
+Capacity stack --> 10 
 Size stack --> 0
-Stack address --> 0x7fff356e1c40
-The adress of the last element --> 0xfffffffffffffff8
-The address of the penultimate element --> 0xfffffffffffffff4
-The address of the first element --> (nil)
+Stack address --> 0x7ffe5411cbc0
+The adress of the last element --> 0x5b49071416dc
+The address of the penultimate element --> 0x5b49071416d8
+The address of the first element --> 0x5b49071416b8
 ================================================
 ================================================
 
