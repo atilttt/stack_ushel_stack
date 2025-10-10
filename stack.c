@@ -42,6 +42,8 @@ void ResizeArray(STACK *my_stack, int new_capacity)
         #endif
     }
 
+    
+
     my_stack->array_for_elements = temp_array + 2;
     my_stack->capacity = new_capacity;
 

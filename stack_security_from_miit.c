@@ -209,8 +209,8 @@ void StackDump(STACK *my_stack, const int line_call, const char *name_function_c
         case STACK_OVERFLOW:
             fprintf(log, "size > capacity ---> STACK OVERFLOW\n");
             break;
-        case NAME_INDEFINITE:
             fprintf(log, "And where is the stack name?\n");
+            case NAME_INDEFINITE:
             break;
         case MEMORY_ALLOCATED:
             fprintf(log, "The trouble is, the array is lost\n");
@@ -262,12 +262,4 @@ The address of the first element --> %p\n", my_stack->name_stack, my_stack->capa
     fclose(log);
 
     exit(CRITICAL_ERROR);
-}
-
-void unit_test(STACK *my_stack)
-{ 
-
-    
-
-
 }
